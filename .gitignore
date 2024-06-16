@@ -1,0 +1,16 @@
+# Ignore all files in the models directory
+/models/*
+
+# Ignore all files in the input_videos directory
+/input_videos/*
+
+# Ignore all files in the output_videos directory
+/output_videos/*
+
+# Ignore the yolov8x.pt file in the root directory
+/yolov8x.pt
+
+/runs/*
+
+
+/training/tennis-ball-detection-6/*
