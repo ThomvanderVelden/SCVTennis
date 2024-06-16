@@ -4,10 +4,10 @@ import torchvision.models as models
 import cv2
 
 
-class CourtLineDetector:
+class CourtLineDetector6kp:
     def __init__(self, model_path):
         self.model = models.resnet50(pretrained=False)
-        self.model.fc = torch.nn.Linear(self.model.fc.in_features, 14*2)
+        self.model.fc = torch.nn.Linear(self.model.fc.in_features, 6*2)
         self.model.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         self.transforms = transforms.Compose([
@@ -37,8 +37,8 @@ class CourtLineDetector:
         for i in range(0, len(keypoints), 2):
             x = int(keypoints[i])
             y = int(keypoints[i+1])
-            cv2.putText(image, str(i//2), (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
-            cv2.circle(image, (x,y),5,(0, 255, 255), -1)
+            cv2.putText(image, str(i//2), (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            cv2.circle(image, (x,y),8,(0, 255, 255), -1)
 
         return image
 

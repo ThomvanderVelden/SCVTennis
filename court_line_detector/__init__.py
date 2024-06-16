@@ -1,1 +1,3 @@
 from .court_line_detector import CourtLineDetector
+from .court_line_detector_classical import  CourtLineDetectorClassical
+from .court_line_detector_6kp import CourtLineDetector6kp
