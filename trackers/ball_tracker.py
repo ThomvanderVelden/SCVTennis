@@ -48,18 +48,52 @@ class BallTracker:
         
         return ball_dict
 
-    def draw_bboxes(self,video_frames, player_detections):
+    def draw_bboxes(self, video_frames, player_detections):
         output_video_frames = []
+        prev_y2 = None  # Initialize prev_y2 to None to handle the first frame correctly
+        descend = True
+
         for frame, ball_dict in zip(video_frames, player_detections):
             # Draw Bounding Boxes
+            bounce = False
+            no_detection = True
+            current_y2 = None  # Initialize current_y2 for each frame
+            # print(prev_y2)
+            # print(frame)
+
             for track_id, bbox in ball_dict.items():
                 x1, y1, x2, y2 = bbox
-                print(x1, y1, x2, y2)
-                cv2.putText(frame, f"Ball ID: {track_id}",(int(bbox[0]),int(bbox[1] -10 )),cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
+                if y2 == 0:
+                    continue  # Skip if the detection is zero
+
+                current_y2 = y2  # Update current_y2 with the current bbox's y2
+
+                if prev_y2 is not None:
+                    if y2 > prev_y2 and descend and not bounce:
+                        print(f"y2:  {y2} prev_y2:  {prev_y2}")
+                        print("bounce_detected")
+                        bounce = True
+                        descend = False
+                    
+                if bounce:
+                    cv2.putText(frame, "Bounce", (int(bbox[0]), int(bbox[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
+                else:
+                    cv2.putText(frame, f"Ball ID: {track_id}", (int(bbox[0]), int(bbox[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
+
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
+                no_detection = False
+                # bounce = False
+            
+
+            if not no_detection and current_y2 is not None:
+                if prev_y2 is not None and current_y2 < prev_y2:
+                    descend = True
+                prev_y2 = current_y2  # Update prev_y2 after processing all bboxes in the current frame
+
             output_video_frames.append(frame)
-        
+
         return output_video_frames
+
 
 
     
